@@ -21,6 +21,7 @@ print(X_training)
 
 # for i in df:
 #     X_training.append(i)
+#
 
 max_sil_sc = 0
 best_k = 0

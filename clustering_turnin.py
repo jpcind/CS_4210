@@ -1,3 +1,11 @@
+# -------------------------------------------------------------------------
+# AUTHOR: Joey Cindass
+# FILENAME: clustering_turnin.py
+# SPECIFICATION: checking k values on which maximizes Silhouette coefficient
+# FOR: CS 4210- Assignment #5
+# TIME SPENT: 3 hours
+# -----------------------------------------------------------*/
+
 from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 import numpy as np
@@ -11,36 +19,29 @@ warnings.filterwarnings("ignore")
 
 df = pd.read_csv('training_data.csv', sep=',', header=None)
 
-X_training = []
-for i in df:
-    temp = []
-    for j in df:
-        temp.append(j)
-    X_training.append(temp)
-print(X_training)
-
-# for i in df:
-#     X_training.append(i)
-#
+X_training = df.values
 
 max_sil_sc = 0
-best_k = 0
-for k in range(2, 21):
-    kmeans = KMeans(n_clusters=k, random_state=0)
-    kmeans.fit(X_training)
-    # kmeans.fit(X_training)
-    # print(kmeans.labels_)
-    sil_sc = silhouette_score(X_training, kmeans.labels_)
-    if sil_sc > max_sil_sc:
-        max_sil_sc = sil_sc
-        best_k = k
+sil_coefs = []
 
-# kmeans = KMeans(n_clusters=3)
-# kmeans.fit(X_training)
-# labels = kmeans.labels_
-# print(X_training)
-# silhouette_score(X_training, labels)
-# print(labels)
-# kmeans.fit(X_training)
-# print(kmeans.labels_)
-# s_avg = silhouette_score(X_training, labels)
+for k in range(2, 21):
+    print(k)
+    kmeans = KMeans(n_clusters=k, random_state=0, n_init=10)
+    kmeans.fit(X_training)
+    temp_sil_coef = silhouette_score(X_training, kmeans.labels_)
+    sil_coefs.append(temp_sil_coef)
+    if silhouette_score(X_training, kmeans.labels_) > temp_sil_coef:
+        max_sil_sc = temp_sil_coef
+
+
+plt.plot(range(2, 21), sil_coefs)
+plt.xlabel('Number of clusters (k)')
+plt.ylabel('Silhouette Coefficients')
+plt.title("Silhouette Coefficient vs. Number of Clusters")
+plt.show()
+
+df = pd.read_csv('testing_data.csv', sep=',', header=None)
+
+labels = np.array(df.values).reshape(1, df.shape[0])[0]
+
+print("K-Means Homogeneity Score = " + metrics.homogeneity_score(labels, kmeans.labels_).__str__())

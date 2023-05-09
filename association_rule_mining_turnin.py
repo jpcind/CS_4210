@@ -43,7 +43,12 @@ for i in range(len(rules)):
     support = rules.loc[i]['support']
     confidence = rules.loc[i]['confidence']
 
-    prior = support / len(encoded_vals)
+    # support_count = (ohe_df[consequents] == False).all(axis=1)
+
+    support_count = support * len(df.index)
+    prior = support_count / len(encoded_vals)
+
+    # prior = support_count / len(encoded_vals)
     gain_in_conf = str(100*((confidence-prior) / prior))
 
     print("{} --> {}".format(antecedents, consequents))
